@@ -1,0 +1,65 @@
+-- Таблица client
+CREATE TABLE client
+(
+    client_id        SERIAL PRIMARY KEY,
+    last_name        VARCHAR(255),
+    first_name       VARCHAR(255),
+    middle_name      VARCHAR(255),
+    birth_date       DATE,
+    email            VARCHAR(255),
+    gender           VARCHAR(255),
+    marital_status   VARCHAR(255),
+    dependent_amount INTEGER,
+    passport_id      BIGINT,
+    employment_id    VARCHAR(255),
+    account_number   VARCHAR(255),
+    FOREIGN KEY (passport_id) REFERENCES passport (passport_id)
+);
+
+-- Таблица credit
+CREATE TABLE credit
+(
+    credit_id        SERIAL PRIMARY KEY,
+    amount           DECIMAL,
+    term             INTEGER,
+    monthly_payment  DECIMAL,
+    rate             DECIMAL,
+    psk              DECIMAL,
+    payment_schedule JSONB,
+    insurance_enable BOOLEAN,
+    salary_client    BOOLEAN,
+    credit_status    VARCHAR(255)
+);
+
+-- Таблица statement
+CREATE TABLE statement
+(
+    statement_id SERIAL PRIMARY KEY,
+    client_id      INTEGER,
+    credit_id      INTEGER,
+    status         VARCHAR(255),
+    creation_data  TIMESTAMP,
+    applied_offer  VARCHAR(255),
+    sign_date      TIMESTAMP,
+    ses_code       INTEGER,
+    status_history JSONB,
+    FOREIGN KEY (client_id) REFERENCES client (client_id),
+    FOREIGN KEY (credit_id) REFERENCES credit (credit_id)
+);
+-- Таблица passport
+CREATE TABLE passport
+(
+    passport_id   SERIAL PRIMARY KEY,
+    series VARCHAR(255),
+    number VARCHAR(255),
+    issue_branch VARCHAR(255),
+    issue_date DATE,
+    passport_data JSONB
+);
+
+-- Таблица employment
+CREATE TABLE employment
+(
+    employment_id   SERIAL PRIMARY KEY,
+    employment_data JSONB
+);
