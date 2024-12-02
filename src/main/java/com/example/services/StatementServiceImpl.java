@@ -35,25 +35,30 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public List<LoanOfferDto> getListOffers(LoanStatementRequestDto requestDto) {
+        log.info("Формирование списка 4-х предложений с requestDto={}", requestDto);
         List<LoanOfferDto> loanOfferDto = calculateClient.getOffers(requestDto);
+        log.info("Список сформирован loanOfferDto={}", loanOfferDto);
         Client client = createClientEntity(requestDto);
         clientRepository.save(client);
+        log.info("Сущность Client создана и сохранена");
         Credit credit = createCreditEntity(requestDto);
         creditRepository.save(credit);
-
+        log.info("Сущность Credit создана и сохранена");
         Statement statement = new Statement();
         statement.setClient(client);
         statement.setCredit(credit);
+        log.info("Данные заявки заполнены из Credit'a  и Client'a");
         statementRepository.save(statement);
-
+        log.info("Заявка сохранена, возврат loanOfferDto={}", loanOfferDto);
         return loanOfferDto;
     }
 
      Credit createCreditEntity(LoanStatementRequestDto requestDto) {
+
         Credit credit = new Credit();
         credit.setAmount(requestDto.getAmount());
         credit.setTerm(requestDto.getTerm());
-
+         log.info("Сущность Credit создана");
         return credit;
     }
 
@@ -69,8 +74,10 @@ public class StatementServiceImpl implements StatementService {
         Passport passport = new Passport();
         passport.setNumber(requestDto.getPassportNumber());
         passport.setSeries(requestDto.getPassportSeries());
+        log.info("Паспорт заполнен");
 
         client.setPassport(passport);
+         log.info("Сущность Client создана");
 
         return client;
     }
@@ -85,11 +92,11 @@ public class StatementServiceImpl implements StatementService {
 
         List<StatementStatusHistoryDto> offerStatus = new ArrayList<>();
         offerStatus.add(new StatementStatusHistoryDto(PREAPPROVAL, LocalDate.now(), AUTOMATIC));;
-
+        log.info("Статус заявки обновлен, offerStatus = {}", offerStatus);
         statement.setStatementStatusHistoryDto(offerStatus);
         statement.setAppliedOffer(requestDto);
+
         statementRepository.save(statement);
+        log.info("Зявка заполнена и сохранена");
     }
-
-
 }
